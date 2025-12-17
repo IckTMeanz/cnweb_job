@@ -119,7 +119,7 @@ export const getJobById = async (req, res) => {
                 },
                 {
                     path: 'company',
-                    select: "name"
+                    select: "name logo description location website"
                 }
             ]
         );
@@ -276,6 +276,40 @@ export const deleteJob = async (req, res) => {
         console.error('Error deleting saved job:', error);
         return res.status(500).json({
             message: 'An error occurred while deleting the saved job.',
+            success: false
+        });
+    }
+}
+
+//[GET] /api/v1/job/filters/positions
+export const getJobPositions = async (req, res) => {
+    try {
+        const positions = await Job.distinct("title");
+        return res.status(200).json({
+            positions,
+            success: true
+        });
+    } catch (error) {
+        console.error('Error fetching positions:', error);
+        return res.status(500).json({
+            message: 'An error occurred while fetching positions.',
+            success: false
+        });
+    }
+}
+
+//[GET] /api/v1/job/filters/locations
+export const getJobLocations = async (req, res) => {
+    try {
+        const locations = await Job.distinct("location");
+        return res.status(200).json({
+            locations,
+            success: true
+        });
+    } catch (error) {
+        console.error('Error fetching locations:', error);
+        return res.status(500).json({
+            message: 'An error occurred while fetching locations.',
             success: false
         });
     }

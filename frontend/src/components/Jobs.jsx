@@ -9,17 +9,24 @@ const Jobs = () => {
   const { allJobs, selectedValueFilter } = useSelector(store => store.job);
   const [fiterJob, setFilterJob] = useState([]);
   GetAllLaterJob();
-  
+
   useEffect(() => {
     const filteredJobs = allJobs.length > 0 && allJobs.filter((job) => {
-      if (!selectedValueFilter) return true;
-      return (
-        (!selectedValueFilter.title || job?.title.toLowerCase() === selectedValueFilter.title.toLowerCase()) &&
-        (!selectedValueFilter.location || job?.location.toLowerCase() === selectedValueFilter.location.toLowerCase())
-      )
-    })
+      if (!selectedValueFilter || Object.keys(selectedValueFilter).length === 0) return true;
+
+      // Check title filter
+      const titleMatch = !selectedValueFilter.title ||
+        job?.title?.toLowerCase().includes(selectedValueFilter.title.toLowerCase());
+
+      // Check location filter - flexible matching
+      const locationMatch = !selectedValueFilter.location ||
+        job?.location?.toLowerCase().includes(selectedValueFilter.location.toLowerCase()) ||
+        selectedValueFilter.location.toLowerCase().includes(job?.location?.toLowerCase());
+
+      return titleMatch && locationMatch;
+    });
     setFilterJob(filteredJobs);
-  }, [selectedValueFilter])
+  }, [selectedValueFilter, allJobs])
 
   return (
     <div>
